@@ -132,8 +132,8 @@ BOOL CImageview::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	m_nZoom += zDelta;
 
-	if(m_nZoom < 1)
-		m_nZoom = 1;
+	if(m_nZoom < -1000)
+		m_nZoom = -1000;
 
 	if(m_nZoom > 1000)
 		m_nZoom = 1000;
