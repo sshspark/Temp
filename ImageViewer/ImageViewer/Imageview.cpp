@@ -73,7 +73,6 @@ void CImageview::OnDraw(CDC* pDC)
 			int rx = (rt.Width() - m_pImage->GetWidth()) / 2;
 			int ry = (rt.Height() - m_pImage->GetHeight()) / 2;
 
-
 			if(m_nZoom >= 1)
 			{
 				m_pImage->Draw(pDC->m_hDC, rx - m_nZoom / 2, ry - m_nZoom / 2, m_pImage->GetWidth() + m_nZoom, m_pImage->GetHeight() + m_nZoom);
