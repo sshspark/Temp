@@ -295,4 +295,4 @@ static int CALLBACK CompareFunc(LPARAM lParam1, LPARAM lParam2, LPARAM lParam)
 	 CT2A ascii2(strItem2);
 
 	 return bSortDirect?strcmp(ascii.m_psz,ascii2.m_psz):-strcmp(ascii.m_psz,ascii2.m_psz);
- }
+}

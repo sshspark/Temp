@@ -1,4 +1,4 @@
-// Imageview.cpp : êµ¬í˜„ íŒŒì¼ì…ë‹ˆë‹¤.
+// Imageview.cpp : ±¸Çö ÆÄÀÏÀÔ´Ï´Ù.
 //
 
 #include "stdafx.h"
@@ -15,6 +15,7 @@ CImageview::CImageview()
 {
 	m_nZoom = 0;
 	m_pImage = 0;
+	m_strFilePath = L"";
 	m_bMaximize = FALSE;
 }
 
@@ -33,14 +34,14 @@ BEGIN_MESSAGE_MAP(CImageview, CScrollView)
 END_MESSAGE_MAP()
 
 
-// CImageview ê·¸ë¦¬ê¸°ì…ë‹ˆë‹¤.
+// CImageview ±×¸®±âÀÔ´Ï´Ù.
 
 void CImageview::OnInitialUpdate()
 {
 	CScrollView::OnInitialUpdate();
 
 	CSize sizeTotal;
-	// TODO: ì´ ë·°ì˜ ì „ì²´ í¬ê¸°ë¥¼ ê³„ì‚°í•©ë‹ˆë‹¤.
+	// TODO: ÀÌ ºäÀÇ ÀüÃ¼ Å©±â¸¦ °è»êÇÕ´Ï´Ù.
 	sizeTotal.cx = sizeTotal.cy = 100;
 	SetScrollSizes(MM_TEXT, sizeTotal);
 }
@@ -49,7 +50,7 @@ void CImageview::OnDraw(CDC* pDC)
 {
 	CDocument* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
-	// TODO: ì—¬ê¸°ì— ê·¸ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
+	// TODO: ¿©±â¿¡ ±×¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
 
 	
 	CRect _rt;
@@ -70,17 +71,59 @@ void CImageview::OnDraw(CDC* pDC)
 			((CMainFrame*)(AfxGetApp()->m_pMainWnd))->m_wndSplitter.RecalcLayout() ;
 			((CMainFrame*)(AfxGetApp()->m_pMainWnd))->m_wndSplitter2.RecalcLayout();
 	
-			int rx = (rt.Width() - m_pImage->GetWidth()) / 2;
-			int ry = (rt.Height() - m_pImage->GetHeight()) / 2;
+
+			int nWidth =  m_pImage->GetWidth();
+			int nHeight =  m_pImage->GetHeight();
+
+			float dScale = .5f;
+	
+			if(rt.Width() < m_pImage->GetWidth())
+			{
+				dScale = (double)rt.Width() / (double)m_pImage->GetWidth();
+				
+				nWidth *= dScale;
+				nHeight *= dScale;
+
+				m_pImage->Resample(nWidth,nHeight);
+			}
+			if(rt.Height() < m_pImage->GetHeight())
+			{
+				dScale = (double)rt.Height() / (double)m_pImage->GetHeight();
+				
+				nWidth *= dScale;
+				nHeight *= dScale;
+
+				m_pImage->Resample(nWidth,nHeight);
+			}
+			if (rt.Width() < m_pImage->GetWidth() && rt.Height() < m_pImage->GetHeight() )
+			{
+				if( (double)rt.Width() / (double)m_pImage->GetWidth() < (double)rt.Height() / (double)m_pImage->GetHeight())
+					dScale = (double)rt.Height() /  (double)m_pImage->GetHeight();
+				else 
+					dScale = (double)rt.Width() / (double)m_pImage->GetWidth();
+
+				nWidth *= dScale;
+				nHeight *= dScale;
+
+				m_pImage->Resample(nWidth,nHeight);
+			
+			}
+
+			//È­¸éÀÇ Áß°£¿¡ ÀÌ¹ÌÁö¸¦ ¶ç¿ì±â À§ÇÔ
+			//ÀÌ¹ÌÁö ½ÃÀÛ À§Ä¡
+			int rx = (rt.Width() - nWidth) / 2;
+			int ry = (rt.Height() - nHeight) / 2;
+			
 
 			if(m_nZoom >= 1)
 			{
-				m_pImage->Draw(pDC->m_hDC, rx - m_nZoom / 2, ry - m_nZoom / 2, m_pImage->GetWidth() + m_nZoom, m_pImage->GetHeight() + m_nZoom);
+				m_pImage->Draw(pDC->m_hDC, rx - m_nZoom / 2, ry - m_nZoom / 2, nWidth + m_nZoom, nHeight + m_nZoom);
 			}
 			else
 			{
-				m_pImage->Draw(pDC->m_hDC, rx + m_nZoom / 2, ry + m_nZoom / 2, m_pImage->GetWidth() - (-m_nZoom), m_pImage->GetHeight() - (-m_nZoom));
+				m_pImage->Draw(pDC->m_hDC, rx + m_nZoom / 2, ry + m_nZoom / 2, nWidth - (-m_nZoom), nHeight - (-m_nZoom));
 			}	
+
 		}
 		else
 		{
@@ -104,7 +147,7 @@ void CImageview::OnDraw(CDC* pDC)
 }
 
 
-// CImageview ì§„ë‹¨ì…ë‹ˆë‹¤.
+// CImageview Áø´ÜÀÔ´Ï´Ù.
 
 #ifdef _DEBUG
 void CImageview::AssertValid() const
@@ -121,7 +164,7 @@ void CImageview::Dump(CDumpContext& dc) const
 #endif //_DEBUG
 
 
-// CImageview ë©”ì‹œì§€ ì²˜ë¦¬ê¸°ì…ë‹ˆë‹¤.
+// CImageview ¸Ş½ÃÁö Ã³¸®±âÀÔ´Ï´Ù.
 
 void CImageview::OnNcLButtonDblClk(UINT nHitTest, CPoint point)
 {
@@ -132,8 +175,8 @@ BOOL CImageview::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	m_nZoom += zDelta;
 
-	if(m_nZoom < -1000)
-		m_nZoom = -1000;
+	if(m_nZoom < 0)
+		m_nZoom = 0;
 
 	if(m_nZoom > 1000)
 		m_nZoom = 1000;
@@ -152,6 +195,8 @@ void CImageview::UpdateImage(CString strPathName)
 
 	TRACE(_T("FILE NAME : %S \n"),ascii.m_psz);
 	bLoad = m_pImage->Load(ascii.m_psz, CxImage::FindType(ascii.m_psz));
+
+	m_strFilePath = strPathName;
 	
 	if(bLoad) Invalidate();
 }
@@ -159,11 +204,11 @@ void CImageview::UpdateImage(CString strPathName)
 
 void CImageview::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-	// TODO: ì—¬ê¸°ì— ë©”ì‹œì§€ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€ ë°/ë˜ëŠ” ê¸°ë³¸ê°’ì„ í˜¸ì¶œí•©ë‹ˆë‹¤.
+	bool bLoad = false;
 
 	if(!m_bMaximize) m_bMaximize = TRUE;
 	else m_bMaximize = FALSE;
-
+	
 	Invalidate();
 
 	CScrollView::OnLButtonDblClk(nFlags, point);
@@ -176,8 +221,8 @@ void CImageview::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	menu.CreatePopupMenu();
 
 	
-	menu.AppendMenu(MF_STRING, ID_MENU_LEFT_ROTATE, _T("ì™¼ìª½ íšŒì „"));
-	menu.AppendMenu(MF_STRING, ID_MENU_RIGHT_ROTATE, _T("ì˜¤ë¥¸ìª½ íšŒì „"));
+	menu.AppendMenu(MF_STRING, ID_MENU_LEFT_ROTATE, _T("¿ŞÂÊ È¸Àü"));
+	menu.AppendMenu(MF_STRING, ID_MENU_RIGHT_ROTATE, _T("¿À¸¥ÂÊ È¸Àü"));
 
 	menu.TrackPopupMenu(TPM_LEFTALIGN,
 			    point.x,

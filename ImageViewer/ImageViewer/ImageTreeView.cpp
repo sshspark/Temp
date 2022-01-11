@@ -1,4 +1,4 @@
-// ImageTreeView.cpp : ±¸Çö ÆÄÀÏÀÔ´Ï´Ù.
+ï»¿// ImageTreeView.cpp : êµ¬í˜„ íŒŒì¼ì…ë‹ˆë‹¤.
 //
 
 #include "stdafx.h"
@@ -28,7 +28,7 @@ BEGIN_MESSAGE_MAP(CImageTreeView, CTreeView)
 END_MESSAGE_MAP()
 
 
-// CImageTreeView Áø´ÜÀÔ´Ï´Ù.
+// CImageTreeView ì§„ë‹¨ì…ë‹ˆë‹¤.
 
 #ifdef _DEBUG
 void CImageTreeView::AssertValid() const
@@ -418,7 +418,7 @@ BOOL CImageTreeView::GetAllChildNode(HTREEITEM hNode, std::vector<HTREEITEM>* de
 	return true; 
 }
 
-// CImageTreeView ¸Ş½ÃÁö Ã³¸®±âÀÔ´Ï´Ù.
+// CImageTreeView ë©”ì‹œì§€ ì²˜ë¦¬ê¸°ì…ë‹ˆë‹¤.
 
 void CImageTreeView::OnTvnItemexpanded(NMHDR *pNMHDR, LRESULT *pResult)
 {

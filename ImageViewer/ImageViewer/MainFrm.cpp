@@ -174,7 +174,7 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 	GetClientRect(&rt);
 
 	m_wndSplitter.SetColumnInfo(0, rt.Width() / 3 , 10);
-	m_wndSplitter2.SetRowInfo(0, rt.Height() / 2, 10);
+	m_wndSplitter2.SetRowInfo(0, rt.Height() / 2 , 10);
 
 	return TRUE;
 }
